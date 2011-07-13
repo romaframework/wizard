@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="no" default-dependency-check="none" default-lazy-init="false">
+
+	<bean abstract="false" autowire="default" class="org.springframework.context.support.ResourceBundleMessageSource"
+		dependency-check="default" id="messageSource" lazy-init="default" singleton="true">
+		<property name="basename" value="messages" />
+	</bean>
+
+
+	<bean abstract="false" autowire="default" class="org.romaframework.wizard.WizardApplicationConfiguration" dependency-check="default" id="ApplicationConfiguration" lazy-init="default" singleton="true">
+		<property name="applicationName">
+			<value>rema-newwizard</value>
+		</property>
+		<property name="applicationPackage">
+			<value>org.romaframework.wizard</value>
+		</property>
+		<property name="applicationDevelopment">
+			<value>true</value>
+		</property>
+        <property name="configuration">
+            <map/>
+        </property>
+	</bean>
+
+	<bean abstract="false" autowire="default" class="org.romaframework.core.aspect.AspectManager" dependency-check="default"
+		id="AspectManager" lazy-init="default" singleton="true">
+		<property name="defaults">
+			<map>
+				<entry key="console" value-ref="ConsoleAspect" />
+			</map>
+		</property>
+	</bean>
+
+
+</beans>

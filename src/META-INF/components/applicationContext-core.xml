@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="no" default-dependency-check="none" default-lazy-init="false">
+
+	<bean abstract="false" autowire="default" class="org.romaframework.core.resource.AutoReloadManager"
+		dependency-check="default" id="AutoReloadManager" lazy-init="default" singleton="true">
+		<constructor-arg value="1000" />
+	</bean>
+
+	<bean abstract="false" autowire="default" class="org.romaframework.core.resource.ResourceResolver"
+		dependency-check="default" id="ResourceResolver" lazy-init="default" singleton="true" />
+
+	<bean abstract="false" autowire="default" class="org.romaframework.core.schema.SchemaClassResolver"
+		dependency-check="default" id="SchemaClassResolver" lazy-init="default" singleton="true">
+		<constructor-arg ref="ResourceResolver" />
+		<property name="packages">
+			<list>
+				<!-- ADDITIONAL PACKAGES TO USE AS DOMAIN -->
+			</list>
+		</property>
+	</bean>
+
+	<bean abstract="false" autowire="default" class="org.romaframework.core.schema.SchemaManager" dependency-check="default"
+		id="SchemaManager" init-method="config" lazy-init="default" singleton="true">
+		<property name="configuration">
+			<map>
+			</map>
+		</property>
+	</bean>
+
+	<bean abstract="false" autowire="default" class="org.romaframework.core.schema.SchemaConfigurationLoader"
+		dependency-check="default" id="SchemaConfigurationLoader" lazy-init="default" singleton="true" />
+
+	<bean abstract="false" autowire="default" class="org.romaframework.core.schema.SchemaReloader" dependency-check="default"
+		id="SchemaReloader" lazy-init="default" singleton="true" />
+
+</beans>

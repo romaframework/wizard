@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="LOGFILE" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="log/revopro.log" />
+		<param name="Append" value="true"></param>
+		<param name="MaxFileSize" value="1000KB" />
+		<param name="MaxBackupIndex" value="5" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p %x - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{ABSOLUTE} %-5p %x %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="CONSOLE-STDOUT" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+	</appender>
+
+	<!-- YOUR APPLICATION LOG SETTINGS:
+		Set the priority value to DEBUG for best debug -->
+	<category name="org.romaframework.wizard">
+		<priority value="DEBUG" />
+	</category>
+
+	<!-- ROMA FRAMEWORK APPLICATION LOG SETTINGS:
+		Set the priority value to DEBUG for best debug -->
+	<category name="org.romaframework.core">
+		<priority value="ERROR" />
+	</category>
+	<category name="org.romaframework.console">
+		<priority value="INFO" />
+	</category>
+	<category name="org.springframework">
+		<priority value="WARN" />
+	</category>
+
+	<!-- GLOBAL SETTINGS -->
+	<root>
+		<priority value="INFO" />
+		<appender-ref ref="CONSOLE-STDOUT" />
+	</root>
+</log4j:configuration>
