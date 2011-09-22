@@ -27,7 +27,7 @@ public class ProjectManager {
 
 	private Properties					properties					= new Properties();
 
-	public void create(ProjectTypes type, String name, String path, String pack) {
+	public void create(ProjectTypes type, String name, String pack, String path) {
 
 		properties.put(PROJECT_PACKAGE, pack);
 		properties.put(PROJECT_SOURCE, BASE_SOURCE_FOLDER);
