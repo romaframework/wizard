@@ -1,2 +1,4 @@
 /build
 /.settings
+/lib
+/roma-build.xml
