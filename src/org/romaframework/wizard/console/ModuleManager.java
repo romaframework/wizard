@@ -67,6 +67,10 @@ public class ModuleManager {
 		}
 	}
 
+	protected void initProjectDescriptor(String name,String organization){
+		projectDescriptor = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(organization, name), "1.0"), "", null);
+	}
+	
 	protected DefaultModuleDescriptor getProjectDescriptor() {
 		if (projectDescriptor == null) {
 			try {
@@ -114,6 +118,7 @@ public class ModuleManager {
 			if (repo.hasError()) {
 				log.error("Error on module resolve dependencies");
 			}
+			addDependency(mri);
 			mri = repo.getModuleDescriptor().getModuleRevisionId();
 			RetrieveOptions options = new RetrieveOptions();
 			options.setArtifactFilter(new RomaWizardArtifactFilter());
@@ -124,7 +129,6 @@ public class ModuleManager {
 				IvyNode node = (IvyNode) o;
 				if (node.isLoaded()) {
 					installArtifacts(node.getAllArtifacts(), node.getDescriptor(), node.getData().getSettings().getVersionMatcher());
-					addDependency(node.getModuleRevision().getId());
 				}
 			}
 

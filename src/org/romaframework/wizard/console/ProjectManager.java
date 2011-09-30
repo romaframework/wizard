@@ -59,6 +59,7 @@ public class ProjectManager {
 
 		new File(projectDir.getAbsolutePath() + BASE_SOURCE_FOLDER + pack.replace('.', '/') + "/" + BASE_DOMAIN_FOLDER).mkdirs();
 		ModuleManager m = new ModuleManager();
+		m.initProjectDescriptor(name, pack);
 		for (String module : type.getModules()) {
 			m.add(projectDir.getAbsolutePath(), module, properties);
 		}
