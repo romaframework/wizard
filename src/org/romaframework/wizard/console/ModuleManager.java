@@ -6,8 +6,8 @@ import static org.romaframework.wizard.console.ProjectManager.PROJECT_PACKAGE;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -24,7 +24,9 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter;
 import org.apache.ivy.plugins.version.VersionMatcher;
+import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.romaframework.aspect.console.annotation.ConsoleClass;
@@ -40,6 +42,7 @@ public class ModuleManager {
 	private File										projectFile;
 	private Properties							projectInfo;
 	private DefaultModuleDescriptor	projectDescriptor;
+	private ResolveReport						report;
 
 	protected Ivy getIvy() {
 		if (ivy == null) {
@@ -52,6 +55,13 @@ public class ModuleManager {
 			}
 		}
 		return ivy;
+	}
+
+	public ResolveReport getReport() {
+		if (report == null) {
+			getProjectDescriptor();
+		}
+		return report;
 	}
 
 	public void add(String project, String module) {
@@ -67,19 +77,20 @@ public class ModuleManager {
 		}
 	}
 
-	protected void initProjectDescriptor(String name,String organization){
-		projectDescriptor = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(organization, name), "1.0"), "", null);
+	protected void initProjectDescriptor(File projectFile, String name, String organization) {
+		try {
+			DefaultModuleDescriptor projectDescriptor = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId(organization, name), "1.0"), "", null);
+			projectDescriptor.toIvyFile(new File(projectFile.getAbsolutePath() + "/ivy.xml"));
+		} catch (Exception e) {
+			log.error("Error on reading ivy file: ", e);
+		}
 	}
-	
+
 	protected DefaultModuleDescriptor getProjectDescriptor() {
 		if (projectDescriptor == null) {
 			try {
-				if (!new File(projectFile.getAbsolutePath() + "/ivy.xml").exists()) {
-					projectDescriptor = new DefaultModuleDescriptor(new ModuleRevisionId(new ModuleId("prova", "prova"), "1.0"), "status", new Date());
-				} else {
-					ResolveReport report = getIvy().resolve(new File(projectFile.getAbsolutePath() + "/ivy.xml"));
-					projectDescriptor = (DefaultModuleDescriptor) report.getModuleDescriptor();
-				}
+				report = getIvy().resolve(new File(projectFile.getAbsolutePath() + "/ivy.xml"));
+				projectDescriptor = (DefaultModuleDescriptor) report.getModuleDescriptor();
 			} catch (Exception e) {
 				log.error("Error on reading ivy file: ", e);
 			}
@@ -88,9 +99,9 @@ public class ModuleManager {
 		return projectDescriptor;
 	}
 
-	protected void addDependency(ModuleRevisionId mri) {
+	protected void addDependency(ModuleDescriptor moduleDescriptor) {
 		try {
-			getProjectDescriptor().addDependency(new DefaultDependencyDescriptor(mri, false));
+			getProjectDescriptor().addDependency(new DefaultDependencyDescriptor(moduleDescriptor.getDependencies()[0].getDependencyRevisionId(), false));
 		} catch (Exception e) {
 			log.error("Error on loading project dependencies ", e);
 		}
@@ -118,7 +129,6 @@ public class ModuleManager {
 			if (repo.hasError()) {
 				log.error("Error on module resolve dependencies");
 			}
-			addDependency(mri);
 			mri = repo.getModuleDescriptor().getModuleRevisionId();
 			RetrieveOptions options = new RetrieveOptions();
 			options.setArtifactFilter(new RomaWizardArtifactFilter());
@@ -133,10 +143,13 @@ public class ModuleManager {
 			}
 
 			installArtifacts(repo.getModuleDescriptor().getAllArtifacts(), repo.getModuleDescriptor(), getIvy().getSettings().getVersionMatcher());
+			addDependency(repo.getModuleDescriptor());
 
 			org.apache.commons.io.FileUtils.deleteDirectory(new File("libs"));
 			org.apache.commons.io.FileUtils.deleteDirectory(new File("export"));
-			getProjectDescriptor().toIvyFile(new File(projectFile.getAbsolutePath() + "/ivy.xml"));
+			XmlModuleDescriptorWriter.write(getProjectDescriptor(), new File(projectFile.getAbsolutePath() + "/ivy.xml"));
+			projectDescriptor = null;
+			report = null;
 			return true;
 		} catch (Exception e) {
 			log.error("error on module resolve", e);
@@ -158,11 +171,31 @@ public class ModuleManager {
 		for (Artifact art : artifacts) {
 			File artifactFile = new File("libs/" + art.getName() + "." + art.getExt());
 			if (artifactFile.exists()) {
-				if (!getProjectDescriptor().dependsOn(versionMatcher, descriptor)) {
+
+				boolean conains = false;
+				for (Object o : getReport().getDependencies()) {
+					IvyNode node = (IvyNode) o;
+					if (node.getModuleRevision() != null && descriptor.equals(node.getModuleRevision().getDescriptor())) {
+						conains = true;
+						break;
+					}
+
+				}
+				if (!conains) {
 					installArtifact(artifactFile);
+				} else {
+					extractLocal(artifactFile);
 				}
 			}
 		}
+	}
+
+	private File extractLocal(File moduleFile) {
+		String name = moduleFile.getName().substring(0, moduleFile.getName().lastIndexOf('.'));
+		File ext = new File("export/" + name);
+		FileUtils.unzipArchive(moduleFile, ext);
+		return ext;
+
 	}
 
 	/**
@@ -172,9 +205,7 @@ public class ModuleManager {
 	 *          the file to install.
 	 */
 	protected void installArtifact(File moduleFile) {
-		String name = moduleFile.getName().substring(0, moduleFile.getName().lastIndexOf('.'));
-		File ext = new File("export/" + name);
-		FileUtils.unzipArchive(moduleFile, ext);
+		File ext = extractLocal(moduleFile);
 		File scaffolding = new File(ext.getAbsolutePath() + "/scaffolding");
 		if (scaffolding.exists()) {
 			try {
@@ -211,6 +242,26 @@ public class ModuleManager {
 		project.setUserProperty("project.package-path", ((String) projectInfo.get(PROJECT_PACKAGE)).replace('.', '/'));
 		project.setUserProperty("ant.file", buildFile.getAbsolutePath());
 		project.init();
+
+		DefaultLogger consoleLogger = new DefaultLogger() {
+			@Override
+			protected void printMessage(String message, PrintStream stream, int priority) {
+				if (Project.MSG_INFO == priority)
+					ModuleManager.log.info(message);
+				else if (Project.MSG_ERR == priority)
+					ModuleManager.log.error(message);
+				else if (Project.MSG_DEBUG == priority)
+					ModuleManager.log.debug(message);
+				else if (Project.MSG_WARN == priority)
+					ModuleManager.log.warn(message);
+				else if (Project.MSG_VERBOSE == priority)
+					ModuleManager.log.info(message);
+			}
+
+		};
+		consoleLogger.setMessageOutputLevel(Project.MSG_INFO);
+		project.addBuildListener(consoleLogger);
+
 		ProjectHelper helper = ProjectHelper.getProjectHelper();
 		project.addReference("ant.projectHelper", helper);
 		helper.parse(project, buildFile);

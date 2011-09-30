@@ -14,7 +14,7 @@ public class RomaWizardArtifactFilter implements Filter {
 		Artifact art = (Artifact) o;
 		if (!art.getModuleRevisionId().getOrganisation().startsWith(ModuleManager.ROMA_ORGANIZATION_NAME))
 			return false;
-		return art.getName().endsWith("-wizard");
+		return art.getName().endsWith("-wizard") && "zip".equals(art.getType());
 	}
 
 }

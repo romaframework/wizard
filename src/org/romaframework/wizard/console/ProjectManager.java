@@ -18,6 +18,7 @@ public class ProjectManager {
 	public static final String	BASE_IOC_FILE				= "applicationContext.xml";
 
 	public static final String	PROJECT_PACKAGE			= "package";
+	public static final String	PROJECT_NAME				= "name";
 	public static final String	PROJECT_SOURCE			= "src";
 	public static final String	PROJECT_IOC_PATH		= "ioc-path";
 	public static final String	PROJECT_IOC_FILE		= "ioc-file";
@@ -30,6 +31,7 @@ public class ProjectManager {
 	public void create(ProjectTypes type, String name, String pack, String path) {
 
 		properties.put(PROJECT_PACKAGE, pack);
+		properties.put(PROJECT_NAME, name);
 		properties.put(PROJECT_SOURCE, BASE_SOURCE_FOLDER);
 		properties.put(PROJECT_IOC_PATH, BASE_IOC_FOLDER);
 		properties.put(PROJECT_IOC_FILE, BASE_IOC_FILE);
@@ -59,7 +61,7 @@ public class ProjectManager {
 
 		new File(projectDir.getAbsolutePath() + BASE_SOURCE_FOLDER + pack.replace('.', '/') + "/" + BASE_DOMAIN_FOLDER).mkdirs();
 		ModuleManager m = new ModuleManager();
-		m.initProjectDescriptor(name, pack);
+		m.initProjectDescriptor(projectDir, name, pack);
 		for (String module : type.getModules()) {
 			m.add(projectDir.getAbsolutePath(), module, properties);
 		}

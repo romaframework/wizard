@@ -3,10 +3,15 @@
 	<info organisation="org.romaframework" module="roma-wizard" revision="2.9" />
 	<configurations defaultconfmapping="*->*,!sources,!javadoc,!optional">
 	</configurations>
+	<publications>
+		<artifact name="roma-wizard" type="jar" ext="jar"></artifact>
+	</publications>
 	<dependencies>
 		<dependency org="org.romaframework" name="roma-console" rev="latest.integration" />
 		<dependency org="org.apache.ivy" name="ivy" rev="latest.integration" />
 		<dependency org="ant" name="ant" rev="latest.integration" />
 		<dependency org="ant" name="ant-launcher" rev="latest.integration" />
+		<dependency org="ant-contrib" name="ant-contrib" rev="latest.integration" />
+		<dependency org="ant" name="ant-nodeps" rev="latest.integration" />
 	</dependencies>
 </ivy-module>

@@ -3,5 +3,6 @@
 <beans default-autowire="no" default-dependency-check="none" default-lazy-init="false">
 	<bean abstract="false" autowire="default" class="org.romaframework.aspect.console.DefaultConsoleAspect"
 		dependency-check="default" id="ConsoleAspect" lazy-init="default" singleton="true">
+		<property name="mode" value="AUTO" />
 	</bean>
 </beans>
