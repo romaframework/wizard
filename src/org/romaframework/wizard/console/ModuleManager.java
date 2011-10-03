@@ -5,7 +5,6 @@ import static org.romaframework.wizard.console.ProjectManager.PROJECT_PACKAGE;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +28,9 @@ import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
+import org.apache.tools.ant.taskdefs.Copy;
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.FilterSet;
 import org.romaframework.aspect.console.annotation.ConsoleClass;
 import org.romaframework.core.util.FileUtils;
 import org.romaframework.wizard.RomaWizardArtifactFilter;
@@ -209,8 +211,25 @@ public class ModuleManager {
 		File scaffolding = new File(ext.getAbsolutePath() + "/scaffolding");
 		if (scaffolding.exists()) {
 			try {
-				org.apache.commons.io.FileUtils.copyDirectory(scaffolding, projectFile);
-			} catch (IOException ioe) {
+				Project project = new Project();
+				Copy copy = new Copy();
+				copy.setProject(project);
+				FilterSet fs = copy.createFilterSet();
+				fs.setBeginToken("#{");
+				fs.setEndToken("}");
+				for (Object key : projectInfo.keySet()) {
+					fs.addFilter(new FilterSet.Filter("project." + (String) key, (String) projectInfo.get(key)));
+				}
+				fs.addFilter(new FilterSet.Filter("project.path", projectFile.getAbsolutePath()));
+				fs.addFilter(new FilterSet.Filter("project.package-path", ((String) projectInfo.get(PROJECT_PACKAGE)).replace('.', '/')));
+
+				FileSet set = new FileSet();
+				set.setDir(scaffolding);
+				copy.addFileset(set);
+				copy.setTodir(projectFile);
+				copy.execute();
+				
+			} catch (Exception ioe) {
 				log.error("Unable to copy file \"" + scaffolding.getName() + "\" to \"" + projectFile.getName() + " cause: " + ioe, ioe);
 			}
 		}
