@@ -33,6 +33,7 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.FilterSet;
 import org.romaframework.aspect.console.annotation.ConsoleClass;
 import org.romaframework.core.util.FileUtils;
+import org.romaframework.wizard.ModuleData;
 import org.romaframework.wizard.RomaWizardArtifactFilter;
 
 @ConsoleClass(name = "module")
@@ -101,9 +102,11 @@ public class ModuleManager {
 		return projectDescriptor;
 	}
 
-	protected void addDependency(ModuleDescriptor moduleDescriptor) {
+	protected void addDependency(ModuleRevisionId moduleId) {
 		try {
-			getProjectDescriptor().addDependency(new DefaultDependencyDescriptor(moduleDescriptor.getDependencies()[0].getDependencyRevisionId(), false));
+			DefaultDependencyDescriptor ddd = new DefaultDependencyDescriptor(moduleId, false);
+			ddd.addDependencyConfiguration("*", "default");
+			getProjectDescriptor().addDependency(ddd);
 		} catch (Exception e) {
 			log.error("Error on loading project dependencies ", e);
 		}
@@ -121,34 +124,60 @@ public class ModuleManager {
 	 * @return true if module is correctly installed.
 	 */
 	protected boolean add(String project, String module, Properties projectInfo) {
+		return add(project, new ModuleData(module, ROMA_ORGANIZATION_NAME, "latest.integration", true), projectInfo);
+	}
+
+	/**
+	 * Install a module to a project.
+	 * 
+	 * @param project
+	 *          where install.
+	 * @param module
+	 *          to install.
+	 * @param organization
+	 *          the organization of module to install.
+	 * @param version
+	 *          the version of module to add.
+	 * @param projectInfo
+	 *          generic project information.
+	 * @return true if module is correctly installed.
+	 */
+	protected boolean add(String project, ModuleData module, Properties projectInfo) {
 		this.projectInfo = projectInfo;
 		projectFile = new File(project);
 		try {
 
-			ModuleRevisionId mri = new ModuleRevisionId(new ModuleId(ROMA_ORGANIZATION_NAME, module), "latest.integration");
-			ResolveOptions ro = new ResolveOptions();
-			ResolveReport repo = getIvy().resolve(mri, ro, true);
-			if (repo.hasError()) {
-				log.error("Error on module resolve dependencies");
-			}
-			mri = repo.getModuleDescriptor().getModuleRevisionId();
-			RetrieveOptions options = new RetrieveOptions();
-			options.setArtifactFilter(new RomaWizardArtifactFilter());
-			getIvy().retrieve(mri, "libs/[artifact].[ext]", options);
-			List<?> dependencies = repo.getDependencies();
-			Collections.reverse(dependencies);
-			for (Object o : dependencies) {
-				IvyNode node = (IvyNode) o;
-				if (node.isLoaded()) {
-					installArtifacts(node.getAllArtifacts(), node.getDescriptor(), node.getData().getSettings().getVersionMatcher());
+			ModuleRevisionId mri = new ModuleRevisionId(new ModuleId(module.getOrganization(), module.getArtifact()), module.getVersion());
+			if (module.isInstall()) {
+				ResolveOptions ro = new ResolveOptions();
+				ro.setConfs(new String[] { "default", "wizard" });
+				ResolveReport repo = getIvy().resolve(mri, ro, true);
+				if (repo.hasError()) {
+					log.error("Error on module resolve dependencies");
 				}
+				mri = repo.getModuleDescriptor().getModuleRevisionId();
+				RetrieveOptions options = new RetrieveOptions();
+				options.setConfs(new String[] { "wizard" });
+				options.setArtifactFilter(new RomaWizardArtifactFilter());
+				getIvy().retrieve(mri, "libs/[artifact].[ext]", options);
+				List<?> dependencies = repo.getDependencies();
+				Collections.reverse(dependencies);
+				for (Object o : dependencies) {
+					IvyNode node = (IvyNode) o;
+					if (node.isLoaded()) {
+						installArtifacts(node.getAllArtifacts(), node.getDescriptor(), node.getData().getSettings().getVersionMatcher());
+					}
+				}
+
+				installArtifacts(repo.getModuleDescriptor().getAllArtifacts(), repo.getModuleDescriptor(), getIvy().getSettings().getVersionMatcher());
+
+				org.apache.commons.io.FileUtils.deleteDirectory(new File("libs"));
+				org.apache.commons.io.FileUtils.deleteDirectory(new File("export"));
+				addDependency(repo.getModuleDescriptor().getDependencies()[0].getDependencyRevisionId());
+			} else {
+				addDependency(mri);
 			}
 
-			installArtifacts(repo.getModuleDescriptor().getAllArtifacts(), repo.getModuleDescriptor(), getIvy().getSettings().getVersionMatcher());
-			addDependency(repo.getModuleDescriptor());
-
-			org.apache.commons.io.FileUtils.deleteDirectory(new File("libs"));
-			org.apache.commons.io.FileUtils.deleteDirectory(new File("export"));
 			XmlModuleDescriptorWriter.write(getProjectDescriptor(), new File(projectFile.getAbsolutePath() + "/ivy.xml"));
 			projectDescriptor = null;
 			report = null;
@@ -228,7 +257,7 @@ public class ModuleManager {
 				copy.addFileset(set);
 				copy.setTodir(projectFile);
 				copy.execute();
-				
+
 			} catch (Exception ioe) {
 				log.error("Unable to copy file \"" + scaffolding.getName() + "\" to \"" + projectFile.getName() + " cause: " + ioe, ioe);
 			}

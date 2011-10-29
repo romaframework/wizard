@@ -2,11 +2,14 @@ package org.romaframework.wizard.console;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.romaframework.aspect.console.annotation.ConsoleClass;
+import org.romaframework.core.Roma;
+import org.romaframework.wizard.ModuleData;
 import org.romaframework.wizard.ProjectTypes;
 
 @ConsoleClass(name = "project")
@@ -28,7 +31,7 @@ public class ProjectManager {
 
 	private Properties					properties					= new Properties();
 
-	public void create(ProjectTypes type, String name, String pack, String path) {
+	public void create(String type, String name, String pack, String path) {
 
 		properties.put(PROJECT_PACKAGE, pack);
 		properties.put(PROJECT_NAME, name);
@@ -49,7 +52,15 @@ public class ProjectManager {
 			log.error("Project directory:" + name + " already exist");
 			return;
 		}
-
+		ProjectTypes projectTypes = Roma.component(ProjectTypes.class);
+		List<ModuleData> modules = null;
+		if (projectTypes != null) {
+			modules = projectTypes.getModulesOfProject(type);
+		}
+		if (modules == null) {
+			log.error("Project Type selected not exist");
+			return;
+		}
 		projectDir.mkdir();
 
 		try {
@@ -62,7 +73,7 @@ public class ProjectManager {
 		new File(projectDir.getAbsolutePath() + BASE_SOURCE_FOLDER + pack.replace('.', '/') + "/" + BASE_DOMAIN_FOLDER).mkdirs();
 		ModuleManager m = new ModuleManager();
 		m.initProjectDescriptor(projectDir, name, pack);
-		for (String module : type.getModules()) {
+		for (ModuleData module : modules) {
 			m.add(projectDir.getAbsolutePath(), module, properties);
 		}
 

@@ -1,17 +1,24 @@
 package org.romaframework.wizard;
 
-public enum ProjectTypes {
+import java.util.List;
+import java.util.Map;
 
-	WEB(new String[] { "roma-project-web" }), WEBREADY(new String[] { "roma-view-janiculum", "roma-persistence-datanucleus" });
+public class ProjectTypes {
 
-	private String[]	modules;
+	private Map<String, List<ModuleData>>	projectTypes;
 
-	private ProjectTypes(String[] modules) {
-		this.modules = modules;
+	public Map<String, List<ModuleData>> getProjectTypes() {
+		return projectTypes;
 	}
 
-	public String[] getModules() {
-		return modules;
+	public void setProjectTypes(Map<String, List<ModuleData>> modules) {
+		this.projectTypes = modules;
+	}
+
+	public List<ModuleData> getModulesOfProject(String type) {
+		if (projectTypes == null)
+			return null;
+		return projectTypes.get(type);
 	}
 
 }

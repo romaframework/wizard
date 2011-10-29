@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="no" default-dependency-check="none" default-lazy-init="false">
+
+	<bean class=" org.romaframework.wizard.ProjectTypes" name="ProjectTypes" singleton="true">
+		<property name="projectTypes">
+			<map>
+				<entry key="web">
+					<list>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="roma-project-web" />
+							<property name="organization" value="org.romaframework" />
+							<property name="version" value="latest.integration" />
+							<property name="install" value="true" />
+						</bean>
+					</list>
+				</entry>
+				<entry key="webready">
+					<list>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="roma-view-janiculum" />
+							<property name="organization" value="org.romaframework" />
+							<property name="version" value="latest.integration" />
+							<property name="install" value="true" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="roma-persistence-datanucleus" />
+							<property name="organization" value="org.romaframework" />
+							<property name="version" value="latest.integration" />
+							<property name="install" value="true" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="roma-users" />
+							<property name="organization" value="org.romaframework" />
+							<property name="version" value="latest.integration" />
+							<property name="install" value="true" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="jetty" />
+							<property name="organization" value="org.mortbay.jetty" />
+							<property name="version" value="6.1.9" />
+							<property name="install" value="false" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="start" />
+							<property name="organization" value="org.mortbay.jetty" />
+							<property name="version" value="6.1.9" />
+							<property name="install" value="false" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="jetty-util" />
+							<property name="organization" value="org.mortbay.jetty" />
+							<property name="version" value="6.1.9" />
+							<property name="install" value="false" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="jsp-2.1" />
+							<property name="organization" value="org.mortbay.jetty" />
+							<property name="version" value="6.1.9" />
+							<property name="install" value="false" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="log4j" />
+							<property name="organization" value="log4j" />
+							<property name="version" value="latest.integration" />
+							<property name="install" value="false" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="hsqldb" />
+							<property name="organization" value="org.hsqldb" />
+							<property name="version" value="2.0.0" />
+							<property name="install" value="false" />
+						</bean>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="c3p0" />
+							<property name="organization" value="c3p0" />
+							<property name="version" value="latest.integration" />
+							<property name="install" value="false" />
+						</bean>
+					</list>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+</beans>
