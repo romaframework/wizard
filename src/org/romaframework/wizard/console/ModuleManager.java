@@ -171,8 +171,8 @@ public class ModuleManager {
 
 				installArtifacts(repo.getModuleDescriptor().getAllArtifacts(), repo.getModuleDescriptor(), getIvy().getSettings().getVersionMatcher());
 
-				org.apache.commons.io.FileUtils.deleteDirectory(new File("libs"));
-				org.apache.commons.io.FileUtils.deleteDirectory(new File("export"));
+				org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "libs"));
+				org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "export"));
 				addDependency(repo.getModuleDescriptor().getDependencies()[0].getDependencyRevisionId());
 			} else {
 				addDependency(mri);
@@ -200,7 +200,7 @@ public class ModuleManager {
 	 */
 	protected void installArtifacts(Artifact[] artifacts, ModuleDescriptor descriptor, VersionMatcher versionMatcher) {
 		for (Artifact art : artifacts) {
-			File artifactFile = new File("libs/" + art.getName() + "." + art.getExt());
+			File artifactFile = new File(PathHelper.getWizardPath() + "libs/" + art.getName() + "." + art.getExt());
 			if (artifactFile.exists()) {
 
 				boolean conains = false;
@@ -223,7 +223,7 @@ public class ModuleManager {
 
 	private File extractLocal(File moduleFile) {
 		String name = moduleFile.getName().substring(0, moduleFile.getName().lastIndexOf('.'));
-		File ext = new File("export/" + name);
+		File ext = new File(PathHelper.getWizardPath() + "export/" + name);
 		FileUtils.unzipArchive(moduleFile, ext);
 		return ext;
 
@@ -237,6 +237,10 @@ public class ModuleManager {
 	 */
 	protected void installArtifact(File moduleFile) {
 		File ext = extractLocal(moduleFile);
+		install(ext, projectFile, projectInfo);
+	}
+
+	public static void install(File ext, File projectFile, Properties projectInfo) {
 		File scaffolding = new File(ext.getAbsolutePath() + "/scaffolding");
 		if (scaffolding.exists()) {
 			try {
@@ -264,7 +268,7 @@ public class ModuleManager {
 		}
 		File file = new File(ext.getAbsolutePath() + "/wizard/wizard.xml");
 		if (file.exists()) {
-			executeAntScript(file, projectInfo, "add-module");
+			executeAntScript(file, projectFile, projectInfo, "add-module");
 		}
 
 	}
@@ -279,7 +283,7 @@ public class ModuleManager {
 	 * @param targets
 	 *          the targets to execute.
 	 */
-	protected void executeAntScript(File buildFile, Properties projectInfo, String... targets) {
+	protected static void executeAntScript(File buildFile, File projectFile, Properties projectInfo, String... targets) {
 		Project project = new Project();
 
 		for (Object key : projectInfo.keySet()) {

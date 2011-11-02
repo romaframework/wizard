@@ -77,6 +77,10 @@ public class ProjectManager {
 			m.add(projectDir.getAbsolutePath(), module, properties);
 		}
 
+		File projectInstall = new File(PathHelper.getWizardPath() + "projectInstall/" + type);
+		if (projectInstall.exists()) {
+			ModuleManager.install(projectInstall, projectDir, properties);
+		}
 	}
 
 }
