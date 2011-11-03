@@ -159,7 +159,7 @@ public class ModuleManager {
 				RetrieveOptions options = new RetrieveOptions();
 				options.setConfs(new String[] { "wizard" });
 				options.setArtifactFilter(new RomaWizardArtifactFilter());
-				getIvy().retrieve(mri, "libs/[artifact].[ext]", options);
+				getIvy().retrieve(mri, PathHelper.getWizardPath() + "libs/[artifact].[ext]", options);
 				List<?> dependencies = repo.getDependencies();
 				Collections.reverse(dependencies);
 				for (Object o : dependencies) {
@@ -171,8 +171,12 @@ public class ModuleManager {
 
 				installArtifacts(repo.getModuleDescriptor().getAllArtifacts(), repo.getModuleDescriptor(), getIvy().getSettings().getVersionMatcher());
 
-				org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "libs"));
-				org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "export"));
+				try {
+					org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "libs"));
+					org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "export"));
+				} catch (Exception e) {
+					log.warn("Internal error on tmp directory clear", e);
+				}
 				addDependency(repo.getModuleDescriptor().getDependencies()[0].getDependencyRevisionId());
 			} else {
 				addDependency(mri);
@@ -241,12 +245,15 @@ public class ModuleManager {
 	}
 
 	public static void install(File ext, File projectFile, Properties projectInfo) {
+		String[] txtFiles = { "**/*.css", "**/*.jsp", "**/*.java", "**/*.xml", "**/*.js" };
 		File scaffolding = new File(ext.getAbsolutePath() + "/scaffolding");
 		if (scaffolding.exists()) {
 			try {
 				Project project = new Project();
+				// Copy txt file with filter .
 				Copy copy = new Copy();
 				copy.setProject(project);
+				copy.setOverwrite(true);
 				FilterSet fs = copy.createFilterSet();
 				fs.setBeginToken("#{");
 				fs.setEndToken("}");
@@ -257,6 +264,22 @@ public class ModuleManager {
 				fs.addFilter(new FilterSet.Filter("project.package-path", ((String) projectInfo.get(PROJECT_PACKAGE)).replace('.', '/')));
 
 				FileSet set = new FileSet();
+				for (String string : txtFiles) {
+					set.createInclude().setName(string);
+				}
+				set.setDir(scaffolding);
+				copy.addFileset(set);
+				copy.setTodir(projectFile);
+				copy.execute();
+
+				// Copy binary file.
+				copy = new Copy();
+				copy.setOverwrite(true);
+				copy.setProject(project);
+				set = new FileSet();
+				for (String string : txtFiles) {
+					set.createExclude().setName(string);
+				}
 				set.setDir(scaffolding);
 				copy.addFileset(set);
 				copy.setTodir(projectFile);
@@ -283,13 +306,14 @@ public class ModuleManager {
 	 * @param targets
 	 *          the targets to execute.
 	 */
-	protected static void executeAntScript(File buildFile, File projectFile, Properties projectInfo, String... targets) {
+	protected static void executeAntScript(File buildFile, File projectFile, Properties projectInfo, String installerPath, String... targets) {
 		Project project = new Project();
 
 		for (Object key : projectInfo.keySet()) {
 			project.setUserProperty("project." + (String) key, (String) projectInfo.get(key));
 		}
 
+		project.setUserProperty("wizard.path", PathHelper.getWizardPath() + "projectInstall/");
 		project.setUserProperty("project.path", projectFile.getAbsolutePath());
 		project.setUserProperty("project.package-path", ((String) projectInfo.get(PROJECT_PACKAGE)).replace('.', '/'));
 		project.setUserProperty("ant.file", buildFile.getAbsolutePath());

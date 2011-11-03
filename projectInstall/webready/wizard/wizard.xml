@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="add-module" name="roma-web-jetty-wizard">
+
+	<import file="${wizard.path}/base-wizard.xml" />
+
+	<target name="add-module">
+		<echo>Change HomePage.java and CustomApplicationConfiguration.java classes in target project-></echo>
+		<copy todir="${project.path}/${project.src}/${project.package-path}/" overwrite="true">
+			<fileset dir=".">
+				<include name="CustomApplicationConfiguration.java" />
+			</fileset>
+			<filterset>
+				<filter token="project.package" value="${project.package}" />
+			</filterset>
+		</copy>
+
+		<delete file="${project.path}/${project.src}/${project.package-path}/view/domain/HomePage.java" />
+
+		<copy todir="${project.path}/${project.src}/${project.package-path}/view/domain/" overwrite="true">
+			<fileset dir=".">
+				<include name="HomePage*" />
+				<include name="HeaderMainPage.java" />
+			</fileset>
+			<filterset>
+				<filter token="project.package" value="${project.package}" />
+			</filterset>
+		</copy>
+
+		<copy todir="${project.path}/${project.src}/${project.package-path}/view/domain/menu/" overwrite="true">
+			<fileset dir=".">
+				<include name="*Menu.java" />
+			</fileset>
+			<filterset>
+				<filter token="project.package" value="${project.package}" />
+			</filterset>
+		</copy>
+<!--
+		<copy todir="${project.path}/${project.ioc-path}/" overwrite="true">
+			<fileset dir=".">
+				<include name="applicationContext-service-rest.xml" />
+			</fileset>
+		</copy>
+
+		<xmltask source="${project.path}/WebContent/WEB-INF/web.xml" dest="${project.path}/WebContent/WEB-INF/web.xml" preservetype="true" expandEntityReferences="false">
+			<insert path="/web-app/filter[last()]" position="after" >
+				<![CDATA[
+			<filter>
+		        <filter-name>RestServiceFilter</filter-name>
+		        <filter-class>org.romaframework.web.service.rest.RestServiceFilter</filter-class>
+		    </filter>]]>
+			</insert>
+		</xmltask>
+
+		<xmltask source="${project.path}/WebContent/WEB-INF/web.xml" dest="${project.path}/WebContent/WEB-INF/web.xml" preservetype="true"  expandEntityReferences="false">
+			<insert path="/web-app/filter-mapping[last()]" position="after" >
+				<![CDATA[
+			    <filter-mapping>
+			        <filter-name>RestServiceFilter</filter-name>
+			        <url-pattern>/app/*</url-pattern>
+			    </filter-mapping>]]>
+			</insert>
+		</xmltask>	
+		
+		<antcall target="register-def-aspect">
+			<param name="module.aspect-name" value="service" />
+			<param name="module.aspect-component" value="RestServiceModule" />
+		</antcall>
+
+		<copy todir="${project.path}/${project.src}/${project.package-path}/service/" overwrite="true">
+			<fileset dir=".">
+				<include name="*Service*.java" />
+			</fileset>
+			<filterset>
+				<filter token="project.package" value="${project.package}" />
+			</filterset>
+		</copy>
+		-->
+  	</target>
+</project>

@@ -1,6 +1,7 @@
 package org.romaframework.wizard.console;
 
 import java.io.File;
+import java.io.IOException;
 
 public class PathHelper {
 
@@ -9,8 +10,13 @@ public class PathHelper {
 	public static String getWizardPath() {
 		String home = System.getenv(JAVA_HOME);
 		if (home == null || home.isEmpty()) {
-			home = "./";
-		} else if (home.charAt(home.length() - 1) != '/') {
+			try {
+				home = new File(".").getCanonicalPath();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		} 
+		if (home.charAt(home.length() - 1) != '/') {
 			home += "/";
 		}
 		return home;

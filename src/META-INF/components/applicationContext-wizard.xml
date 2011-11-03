@@ -5,10 +5,20 @@
 	<bean class=" org.romaframework.wizard.ProjectTypes" name="ProjectTypes" singleton="true">
 		<property name="projectTypes">
 			<map>
+				<entry key="console">
+					<list>
+						<bean class="org.romaframework.wizard.ModuleData">
+							<property name="artifact" value="roma-console" />
+							<property name="organization" value="org.romaframework" />
+							<property name="version" value="latest.integration" />
+							<property name="install" value="true" />
+						</bean>
+					</list>
+				</entry>
 				<entry key="web">
 					<list>
 						<bean class="org.romaframework.wizard.ModuleData">
-							<property name="artifact" value="roma-project-web" />
+							<property name="artifact" value="roma-view-janiculum" />
 							<property name="organization" value="org.romaframework" />
 							<property name="version" value="latest.integration" />
 							<property name="install" value="true" />
