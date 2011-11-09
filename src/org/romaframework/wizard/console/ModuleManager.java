@@ -40,6 +40,7 @@ import org.romaframework.wizard.RomaWizardArtifactFilter;
 public class ModuleManager {
 
 	public static final String			ROMA_ORGANIZATION_NAME	= "org.romaframework";
+	public static final String[]		TXT_FILES								= { "**/*.css", "**/*.jsp", "**/*.java", "**/*.xml", "**/*.js", "**/*.classpath", "**/*.project" };
 	private Ivy											ivy;
 	private static final Log				log											= LogFactory.getLog(ModuleManager.class);
 	private File										projectFile;
@@ -245,7 +246,7 @@ public class ModuleManager {
 	}
 
 	public static void install(File ext, File projectFile, Properties projectInfo) {
-		String[] txtFiles = { "**/*.css", "**/*.jsp", "**/*.java", "**/*.xml", "**/*.js" };
+
 		File scaffolding = new File(ext.getAbsolutePath() + "/scaffolding");
 		if (scaffolding.exists()) {
 			try {
@@ -264,7 +265,7 @@ public class ModuleManager {
 				fs.addFilter(new FilterSet.Filter("project.package-path", ((String) projectInfo.get(PROJECT_PACKAGE)).replace('.', '/')));
 
 				FileSet set = new FileSet();
-				for (String string : txtFiles) {
+				for (String string : TXT_FILES) {
 					set.createInclude().setName(string);
 				}
 				set.setDir(scaffolding);
@@ -277,7 +278,7 @@ public class ModuleManager {
 				copy.setOverwrite(true);
 				copy.setProject(project);
 				set = new FileSet();
-				for (String string : txtFiles) {
+				for (String string : TXT_FILES) {
 					set.createExclude().setName(string);
 				}
 				set.setDir(scaffolding);
