@@ -9,7 +9,7 @@ import org.romaframework.aspect.view.ViewConstants;
 import org.romaframework.aspect.view.annotation.ViewClass;
 import org.romaframework.core.Roma;
 
-import #{domain.package}#{domain.class};
+import #{domain.package}.#{crud.class};
 import #{project.package}.factory.#{crud.class}Factory;
 import #{project.package}.repository.#{crud.class}Repository;
 
@@ -34,10 +34,10 @@ public class #{crud.class}Select extends CRUDSelect<#{crud.class}> {
     super( #{crud.class}Listable.class, #{crud.class}Instance.class,
            #{crud.class}Instance.class, #{crud.class}Instance.class );
     
-    if (Roma.existComponent(#{domain.class}Repository.class))
-			repository = Roma.component(#{domain.class}Repository.class);
+    if (Roma.existComponent(#{crud.class}Repository.class))
+			repository = Roma.component(#{crud.class}Repository.class);
 
-    filter = new FullTextCRUDFilter<#{crud.class}>(Roma.component(#{domain.class}Factory.class).create());
+    filter = new FullTextCRUDFilter<#{crud.class}>(Roma.component(#{crud.class}Factory.class).create());
     result = new ArrayList<#{crud.class}Listable>();
   }
 

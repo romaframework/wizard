@@ -98,9 +98,8 @@ public class ProjectManager {
 			return;
 		}
 
-		claz = claz.replaceAll("\\.", "/");
-		String realpath;
-		realpath = projectfolder.concat("src/main/java/").concat(claz).concat(".java");
+		String realpath =claz.replaceAll("\\.", "/");;
+		realpath = projectfolder.concat("src/main/java/").concat(realpath).concat(".java");
 		File rpath = new File(realpath);
 
 		if (!rpath.exists()) {
@@ -115,7 +114,12 @@ public class ProjectManager {
 			log.error("Error on reading file: " + projectfolder + "/" + PROJECT_FILE_NAME, e);
 			return;
 		}
-
+		String crudClass = realpath.substring(realpath.lastIndexOf('/') + 1, realpath.length() - 5);
+		properties.put("crud.class", crudClass);
+		properties.put("crud.package.path", realpath.substring(0, realpath.lastIndexOf('/') ) );
+		properties.put("domain.package", claz.substring(0, claz.lastIndexOf('.') ) );
+		properties.put("crud.path", crudClass.toLowerCase());
+		
 		File projectcrud = new File(PathHelper.getWizardPath() + "crud/");
 
 		if (projectcrud.exists()) {

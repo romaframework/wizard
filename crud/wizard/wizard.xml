@@ -5,29 +5,24 @@
 	<import file="${wizard.path}/base-wizard.xml" />
 
 	<target name="add-repository">
+
+		<echo>Create Factory -></echo>
+		<antcall target="copy">
+			<param name="source" value="factory-template/Factory.java" />
+			<param name="dest" value="${project.path}/${project.src}/${project.package-path}/factory/${project.crud.class}Factory.java" />
+		</antcall>
+
 		<if>
-			<available file="${project.path}/${project.src}/${project.package-path}/domain/entity/package.jdo" />
-			<then>
-				<property name="package.jdo.file" value="${project.path}/${project.src}/${project.package-path}/domain/entity/package.jdo" />
-			</then>
-		</if>
-		<if>
-			<and>
-				<available file="${project.path}/${project.src}/${project.package-path}/domain/package.jdo" property="package.jdo.file" />
-				<not>
-					<isset property="package.jdo.file" />
-				</not>
-			</and>
-			<then>
-				<property name="package.jdo.file" value="${project.path}/${project.src}/${project.package-path}/domain/package.jdo" />
-			</then>
-		</if>
-		<if>
-			<isset property="package.jdo.file" />
+			<available file="${project.crud.package.path}/package.jdo" />
 			<then>
 				<echo>Create persistent class entry in package.jdo file -></echo>
-				<xmltask source="${package.jdo.file}" preservetype="true" outputter="${ident}">
-					<copy path="/jdo/package/class[@name='${crud.class}']/@name" attrValue="true" property="existClass">
+				<xmlcatalog id="dtdJDO">
+					<dtd publicId="-//Sun Microsystems, Inc.//DTD Java Data Objects Metadata 2.0//EN" location="${project.crud.package.path}/jdo.dtd" />
+				</xmlcatalog>
+
+				<xmltask source="${project.crud.package.path}/package.jdo" preservetype="true">
+					<xmlcatalog refid="dtdJDO" />
+					<copy path="/jdo/package/class[@name='${project.crud.class}']/@name" attrValue="true" property="existClass">
 					</copy>
 				</xmltask>
 				<if>
@@ -35,15 +30,25 @@
 						<isset property="existClass" />
 					</not>
 					<then>
-						<xmltask source="${package.jdo.file}" dest="${package.jdo.file}" preservetype="true" outputter="${ident}">
+						<xmltask source="${project.crud.package.path}/package.jdo" dest="${project.crud.package.path}/package.jdo" preservetype="true" expandEntityReferences="false">
+							<xmlcatalog refid="dtdJDO" />
 							<insert path="/jdo/package" unless="existClass">
-								<![CDATA[<class name="${crud.class}" detachable="true">${crud.class.jdo.mapping}</class>]]>
+								<![CDATA[<class name="${project.crud.class}" detachable="true">
+							</class>]]>
 							</insert>
 					</xmltask>
 				</then>
 			</if>
 		</then>
 	</if>
+
+	<echo>Create Repository -></echo>
+	<antcall target="copy">
+		<param name="source" value="repository-template/Repository.java" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/repository/${project.crud.class}Repository.java" />
+	</antcall>
+
+
 
 	<if>
 		<not>
@@ -61,13 +66,12 @@
 	</if>
 
 
-	<echo>Adding ${crud.class}Repository class to the applicationContext-domain-repositories.xml -></echo>
-	<xmltask source="${project.path}/${project.ioc-path}/applicationContext-domain-repositories.xml" dest="${project.path}/${project.ioc-path}/applicationContext-domain-repositories.xml" preservetype="true" outputter="${ident}">
-		<xmlcatalog refid="dtds" />
-		<remove path="/beans/bean[@name='${crud.class}Repository']" />
+	<echo>Adding ${project.crud.class}Repository class to the applicationContext-domain-repositories.xml -></echo>
+	<xmltask source="${project.path}/${project.ioc-path}/applicationContext-domain-repositories.xml" dest="${project.path}/${project.ioc-path}/applicationContext-domain-repositories.xml" preservetype="true" expandEntityReferences="false">
+		<remove path="/beans/bean[@name='${project.crud.class}Repository']" />
 		<insert path="/beans">
-			<![CDATA[<bean name="${crud.class}Repository"
-					class="${project.package}.repository.${crud.class}Repository"
+			<![CDATA[<bean name="${project.crud.class}Repository"
+					class="${project.package}.repository.${project.crud.class}Repository"
 					singleton="true" /> ]]>
 				</insert>
 	</xmltask>
@@ -87,16 +91,71 @@
 		</then>
 	</if>
 
-	<echo>Adding ${crud.class}Factory class to the applicationContext-domain-factories.xml -></echo>
-	<xmltask source="${project.path}/${project.ioc-path}/applicationContext-domain-factories.xml" dest="${project.path}/${project.ioc-path}/applicationContext-domain-factories.xml" preservetype="true" outputter="${ident}">
-		<xmlcatalog refid="dtds" />
-		<remove path="/beans/bean[@name='${crud.class}Factory']" />
+	<echo>Adding ${project.crud.class}Factory class to the applicationContext-domain-factories.xml -></echo>
+	<xmltask source="${project.path}/${project.ioc-path}/applicationContext-domain-factories.xml" dest="${project.path}/${project.ioc-path}/applicationContext-domain-factories.xml" preservetype="true" expandEntityReferences="false">
+		<remove path="/beans/bean[@name='${project.crud.class}Factory']" />
 		<insert path="/beans">
-			<![CDATA[<bean name="${crud.class}Factory"
-					class="${project.package}.factory.${crud.class}Factory"
+			<![CDATA[<bean name="${project.crud.class}Factory"
+					class="${project.package}.factory.${project.crud.class}Factory"
 					singleton="true" /> ]]>
 				</insert>
 	</xmltask>
+
+	<echo>Create Crud Class -></echo>
+	<copy file="repository-template/Repository.java" tofile="${project.path}/${project.src}/${project.package-path}/repository/${project.crud.class}Repository.java">
+		<filterset begintoken="#{" endtoken="}">
+			<filter token="project.package" value="${project.package}" />
+			<filter token="domain.package" value="${project.domain.package}" />
+			<filter token="project.name" value="${project.name}" />
+			<filter token="crud.class" value="${project.crud.class}" />
+		</filterset>
+	</copy>
+	<echo></echo>
+	<antcall target="copy">
+		<param name="source" value="view-template/Filter.java" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/view/domain/${project.crud.path}/${project.crud.class}Filter.java" />
+	</antcall>
+	<antcall target="copy">
+		<param name="source" value="view-template/Filter.xml" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/view/domain/${project.crud.path}/${project.crud.class}Filter.xml" />
+	</antcall>
+	<antcall target="copy">
+		<param name="source" value="view-template/Instance.java" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/view/domain/${project.crud.path}/${project.crud.class}Instance.java" />
+	</antcall>
+	<antcall target="copy">
+		<param name="source" value="view-template/Instance.xml" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/view/domain/${project.crud.path}/${project.crud.class}Instance.xml" />
+	</antcall>
+	<antcall target="copy">
+		<param name="source" value="view-template/Listable.java" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/view/domain/${project.crud.path}/${project.crud.class}Listable.java" />
+	</antcall>
+	<antcall target="copy">
+		<param name="source" value="view-template/Listable.xml" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/view/domain/${project.crud.path}/${project.crud.class}Listable.xml" />
+	</antcall>
+	<antcall target="copy">
+		<param name="source" value="view-template/Main.java" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/view/domain/${project.crud.path}/${project.crud.class}Main.java" />
+	</antcall>
+	<antcall target="copy">
+		<param name="source" value="view-template/Select.java" />
+		<param name="dest" value="${project.path}/${project.src}/${project.package-path}/view/domain/${project.crud.path}/${project.crud.class}Select.java" />
+	</antcall>
+
+</target>
+
+<target name="copy">
+	<copy file="${source}" tofile="${dest}">
+		<filterset begintoken="#{" endtoken="}">
+			<filter token="project.package" value="${project.package}" />
+			<filter token="domain.package" value="${project.domain.package}" />
+			<filter token="project.name" value="${project.name}" />
+			<filter token="crud.class" value="${project.crud.class}" />
+			<filter token="class.package" value="${project.package}.view.domain.${project.crud.path}" />
+		</filterset>
+	</copy>
 </target>
 
 </project>
