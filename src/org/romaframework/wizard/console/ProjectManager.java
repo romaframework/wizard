@@ -1,6 +1,7 @@
 package org.romaframework.wizard.console;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Properties;
@@ -8,8 +9,10 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.romaframework.aspect.console.annotation.ConsoleClass;
+import org.romaframework.aspect.console.annotation.ConsoleParameter;
 import org.romaframework.core.Roma;
 import org.romaframework.wizard.ModuleData;
+import org.romaframework.wizard.PathHelper;
 import org.romaframework.wizard.ProjectTypes;
 
 @ConsoleClass(name = "project")
@@ -31,7 +34,7 @@ public class ProjectManager {
 
 	private Properties					properties					= new Properties();
 
-	public void create(String type, String name, String pack, String path) {
+	public void create(@ConsoleParameter(name = "type") String type, String name, String pack, String path) {
 
 		properties.put(PROJECT_PACKAGE, pack);
 		properties.put(PROJECT_NAME, name);
@@ -80,6 +83,44 @@ public class ProjectManager {
 		File projectInstall = new File(PathHelper.getWizardPath() + "projectInstall/" + type);
 		if (projectInstall.exists()) {
 			ModuleManager.install(projectInstall, projectDir, properties);
+		}
+	}
+
+	public void crud(String claz, String projectfolder) {
+
+		if (!projectfolder.endsWith("/")) {
+			projectfolder = projectfolder.concat("/");
+		}
+
+		File dirclass = new File(projectfolder);
+		if (!dirclass.exists()) {
+			System.out.println("The project folder not exits:" + projectfolder);
+			return;
+		}
+
+		claz = claz.replaceAll("\\.", "/");
+		String realpath;
+		realpath = projectfolder.concat("src/main/java/").concat(claz).concat(".java");
+		File rpath = new File(realpath);
+
+		if (!rpath.exists()) {
+			System.out.println("Entity class not exist:" + realpath);
+			return;
+		}
+		Properties properties = new Properties();
+		try {
+			properties.loadFromXML(new FileInputStream(projectfolder + "/" + PROJECT_FILE_NAME));
+
+		} catch (Exception e) {
+			log.error("Error on reading file: " + projectfolder + "/" + PROJECT_FILE_NAME, e);
+			return;
+		}
+
+		File projectcrud = new File(PathHelper.getWizardPath() + "crud/");
+
+		if (projectcrud.exists()) {
+			ModuleManager.install(projectcrud, new File(projectfolder), properties);
+
 		}
 	}
 

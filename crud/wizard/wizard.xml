@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="add-repository" name="roma-aspect-crud-wizard">
+	<property environment="env" />
+	<property name="roma.home" value="${env.ROMA_HOME}" />
+	<import file="${wizard.path}/base-wizard.xml" />
+
+	<target name="add-repository">
+		<if>
+			<available file="${project.path}/${project.src}/${project.package-path}/domain/entity/package.jdo" />
+			<then>
+				<property name="package.jdo.file" value="${project.path}/${project.src}/${project.package-path}/domain/entity/package.jdo" />
+			</then>
+		</if>
+		<if>
+			<and>
+				<available file="${project.path}/${project.src}/${project.package-path}/domain/package.jdo" property="package.jdo.file" />
+				<not>
+					<isset property="package.jdo.file" />
+				</not>
+			</and>
+			<then>
+				<property name="package.jdo.file" value="${project.path}/${project.src}/${project.package-path}/domain/package.jdo" />
+			</then>
+		</if>
+		<if>
+			<isset property="package.jdo.file" />
+			<then>
+				<echo>Create persistent class entry in package.jdo file -></echo>
+				<xmltask source="${package.jdo.file}" preservetype="true" outputter="${ident}">
+					<copy path="/jdo/package/class[@name='${crud.class}']/@name" attrValue="true" property="existClass">
+					</copy>
+				</xmltask>
+				<if>
+					<not>
+						<isset property="existClass" />
+					</not>
+					<then>
+						<xmltask source="${package.jdo.file}" dest="${package.jdo.file}" preservetype="true" outputter="${ident}">
+							<insert path="/jdo/package" unless="existClass">
+								<![CDATA[<class name="${crud.class}" detachable="true">${crud.class.jdo.mapping}</class>]]>
+							</insert>
+					</xmltask>
+				</then>
+			</if>
+		</then>
+	</if>
+
+	<if>
+		<not>
+			<available file="${project.path}/${project.ioc-path}/applicationContext-domain-repositories.xml" />
+		</not>
+		<then>
+			<echo>Create applicationContext-domain-repositories.xml file -></echo>
+			<copy file="applicationContext-domain-repositories.xml" todir="${project.path}/${project.ioc-path}">
+				<filterset>
+					<filter token="project.package" value="${project.package}" />
+					<filter token="project.name" value="${project.name}" />
+				</filterset>
+			</copy>
+		</then>
+	</if>
+
+
+	<echo>Adding ${crud.class}Repository class to the applicationContext-domain-repositories.xml -></echo>
+	<xmltask source="${project.path}/${project.ioc-path}/applicationContext-domain-repositories.xml" dest="${project.path}/${project.ioc-path}/applicationContext-domain-repositories.xml" preservetype="true" outputter="${ident}">
+		<xmlcatalog refid="dtds" />
+		<remove path="/beans/bean[@name='${crud.class}Repository']" />
+		<insert path="/beans">
+			<![CDATA[<bean name="${crud.class}Repository"
+					class="${project.package}.repository.${crud.class}Repository"
+					singleton="true" /> ]]>
+				</insert>
+	</xmltask>
+
+	<if>
+		<not>
+			<available file="${project.path}/${project.ioc-path}/applicationContext-domain-factories.xml" />
+		</not>
+		<then>
+			<echo>Create applicationContext-domain-factories.xml file -></echo>
+			<copy file="applicationContext-domain-factories.xml" todir="${project.path}/${project.ioc-path}">
+				<filterset>
+					<filter token="project.package" value="${project.package}" />
+					<filter token="project.name" value="${project.name}" />
+				</filterset>
+			</copy>
+		</then>
+	</if>
+
+	<echo>Adding ${crud.class}Factory class to the applicationContext-domain-factories.xml -></echo>
+	<xmltask source="${project.path}/${project.ioc-path}/applicationContext-domain-factories.xml" dest="${project.path}/${project.ioc-path}/applicationContext-domain-factories.xml" preservetype="true" outputter="${ident}">
+		<xmlcatalog refid="dtds" />
+		<remove path="/beans/bean[@name='${crud.class}Factory']" />
+		<insert path="/beans">
+			<![CDATA[<bean name="${crud.class}Factory"
+					class="${project.package}.factory.${crud.class}Factory"
+					singleton="true" /> ]]>
+				</insert>
+	</xmltask>
+</target>
+
+</project>

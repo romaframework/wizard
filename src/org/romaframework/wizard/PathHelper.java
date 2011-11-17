@@ -1,4 +1,4 @@
-package org.romaframework.wizard.console;
+package org.romaframework.wizard;
 
 import java.io.File;
 import java.io.IOException;

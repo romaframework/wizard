@@ -34,6 +34,7 @@ import org.apache.tools.ant.types.FilterSet;
 import org.romaframework.aspect.console.annotation.ConsoleClass;
 import org.romaframework.core.util.FileUtils;
 import org.romaframework.wizard.ModuleData;
+import org.romaframework.wizard.PathHelper;
 import org.romaframework.wizard.RomaWizardArtifactFilter;
 
 @ConsoleClass(name = "module")
