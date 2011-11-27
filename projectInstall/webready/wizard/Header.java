@@ -10,9 +10,9 @@ import org.romaframework.frontend.view.domain.RomaControlPanel;
 import org.romaframework.module.users.domain.BaseAccount;
 import org.romaframework.module.users.view.domain.ChangePassword;
 
-public class HeaderMainPage implements MessageResponseListener {
+public class Header implements MessageResponseListener {
 
-	public HeaderMainPage() {
+	public Header() {
 	}
 
 	@ViewAction(label = "", render = ViewConstants.RENDER_BUTTON)

@@ -6,7 +6,7 @@ import org.romaframework.frontend.domain.page.HomePageBasic;
 public class HomePageAdmin extends HomePageBasic {
 
 	public HomePageAdmin(){
-		Roma.flow().forward(new HeaderMainPage(),"screen://header");
+		Roma.flow().forward(new Header(),"screen://header");
 	}
 	
 	@Override

@@ -7,7 +7,7 @@ import org.romaframework.core.Roma;
 public class HomePage {
 
 	public HomePage() {
-		Roma.flow().forward(new HeaderMainPage(),"screen://header");
+		Roma.flow().forward(new Header(),"screen://header");
 	}
 
 }

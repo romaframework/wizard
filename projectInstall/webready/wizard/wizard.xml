@@ -19,7 +19,7 @@
 		<copy todir="${project.path}/${project.src}/${project.package-path}/view/domain/" overwrite="true">
 			<fileset dir=".">
 				<include name="HomePage*" />
-				<include name="HeaderMainPage.java" />
+				<include name="Header.java" />
 			</fileset>
 			<filterset>
 				<filter token="project.package" value="${project.package}" />
