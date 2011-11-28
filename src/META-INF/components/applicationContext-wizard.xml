@@ -10,7 +10,7 @@
 						<bean class="org.romaframework.wizard.ModuleData">
 							<property name="artifact" value="roma-console" />
 							<property name="organization" value="org.romaframework" />
-							<property name="version" value="latest.integration" />
+							<property name="version" value="3.0.0-SNAPSHOT" />
 							<property name="install" value="true" />
 						</bean>
 					</list>
@@ -20,7 +20,7 @@
 						<bean class="org.romaframework.wizard.ModuleData">
 							<property name="artifact" value="roma-view-janiculum" />
 							<property name="organization" value="org.romaframework" />
-							<property name="version" value="latest.integration" />
+							<property name="version" value="3.0.0-SNAPSHOT" />
 							<property name="install" value="true" />
 						</bean>
 					</list>
@@ -30,19 +30,19 @@
 						<bean class="org.romaframework.wizard.ModuleData">
 							<property name="artifact" value="roma-view-janiculum" />
 							<property name="organization" value="org.romaframework" />
-							<property name="version" value="latest.integration" />
+							<property name="version" value="3.0.0-SNAPSHOT" />
 							<property name="install" value="true" />
 						</bean>
 						<bean class="org.romaframework.wizard.ModuleData">
 							<property name="artifact" value="roma-persistence-datanucleus" />
 							<property name="organization" value="org.romaframework" />
-							<property name="version" value="latest.integration" />
+							<property name="version" value="3.0.0-SNAPSHOT" />
 							<property name="install" value="true" />
 						</bean>
 						<bean class="org.romaframework.wizard.ModuleData">
 							<property name="artifact" value="roma-users" />
 							<property name="organization" value="org.romaframework" />
-							<property name="version" value="latest.integration" />
+							<property name="version" value="3.0.0-SNAPSHOT" />
 							<property name="install" value="true" />
 						</bean>
 						<bean class="org.romaframework.wizard.ModuleData">

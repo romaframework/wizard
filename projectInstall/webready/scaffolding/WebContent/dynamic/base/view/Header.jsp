@@ -1,4 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="/WEB-INF/roma.tld" prefix="roma"%>
@@ -13,7 +12,7 @@
     String appName = Utility.getCapitalizedString(Roma.component(ApplicationConfiguration.class).getApplicationName());
     SessionInfo sess = Roma.session().getActiveSessionInfo();
 %>
-<table width='100%' style="border-bottom: 1px solid #9DBBC6;" class="class_Header">
+<table style="width:100%"" style="border-bottom: 1px solid #9DBBC6;" class="class_Header">
 	<tr>
 		<td align="left"
 			style="width: 150px;height: 75px; background-image: url(<%=request.getContextPath()%>/static/base/image/logo.jpg);background-repeat: no-repeat;background-color: rgb(255, 255, 255);background-position: 20px 5px; border-color: rgb(255, 255, 255);border: 0;"></td>
@@ -44,7 +43,7 @@
 		<td align="center" style="width: 100px;">
 			<a href="<%=request.getContextPath()%>/dynamic/common/logout.jsp" title="logout">
 			<img src="<%=request.getContextPath()%>/static/base/image/logout.png"
-			border='0' class="img_logout" alt="Logout" /> 
+			style="border:0;" class="img_logout" alt="Logout" /> 
 			</a> 
 		</td>
 	</tr>

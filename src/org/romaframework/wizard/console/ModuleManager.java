@@ -53,7 +53,7 @@ public class ModuleManager {
 		if (ivy == null) {
 			ivy = Ivy.newInstance();
 			try {
-				ivy.configureDefault();
+				ivy.configure(new File("projectInstall/ivysettings.xml"));
 			} catch (Exception e) {
 				log.error("Error on ivy loading");
 				throw new RuntimeException("Error on ivy loading", e);

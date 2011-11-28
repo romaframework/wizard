@@ -8,7 +8,10 @@
 				<ivy pattern="${ivy.default.ivy.user.dir}/local/[organisation]/[module]/[revision]/ivys/ivy.xml" />
 				<artifact pattern="${ivy.default.ivy.user.dir}/local/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" />
 			</filesystem>
-			<ibiblio name="atlassian" m2compatible="true" root="http://repository.atlassian.com/maven2/" />
+			<url name="snapshot" m2compatible="true" >
+                <ivy pattern="https://oss.sonatype.org/content/repositories/snapshots/[organisation]/[module]/[revision]/ivy-[revision].[ext]" />
+                <artifact pattern="https://oss.sonatype.org/content/repositories/snapshots/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+            </url>
 		</chain>
 	</resolvers>
 </ivysettings>
