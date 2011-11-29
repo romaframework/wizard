@@ -15,6 +15,12 @@ public class PathHelper {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+		}else {
+			try {
+				home = new File(home).getCanonicalPath();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}			
 		}
 		if (home.charAt(home.length() - 1) != '/') {
 			home += "/";

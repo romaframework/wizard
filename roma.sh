@@ -29,7 +29,7 @@ then
 	then
 		echo $ROMA_HOME
 	else
-		`export ROMA_HOME=$ROMA_HOME`
+		export ROMA_HOME=$ROMA_HOME
 	fi
 fi
 

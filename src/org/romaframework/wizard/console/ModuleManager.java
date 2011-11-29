@@ -53,7 +53,7 @@ public class ModuleManager {
 		if (ivy == null) {
 			ivy = Ivy.newInstance();
 			try {
-				ivy.configure(new File("projectInstall/ivysettings.xml"));
+				ivy.configure(new File(PathHelper.getWizardPath() + "projectInstall/ivysettings.xml"));
 			} catch (Exception e) {
 				log.error("Error on ivy loading");
 				throw new RuntimeException("Error on ivy loading", e);
@@ -69,12 +69,25 @@ public class ModuleManager {
 		return report;
 	}
 
-	public void add(String project, String module) {
-
+	public void add(String module, String project) {
+		log.error("Error on reading installing module: " + module);
 		Properties properties = new Properties();
 		try {
 			properties.loadFromXML(new FileInputStream(project + "/" + PROJECT_FILE_NAME));
-			if (add(project, module, properties)) {
+			if (add(project, module, properties, "latest.integration")) {
+				log.error("Error on reading installing module: " + module);
+			}
+		} catch (Exception e) {
+			log.error("Error on reading file: " + project + "/" + PROJECT_FILE_NAME, e);
+		}
+	}
+
+	public void add(String module, String version, String project) {
+		log.error("Error on reading installing module: " + module);
+		Properties properties = new Properties();
+		try {
+			properties.loadFromXML(new FileInputStream(project + "/" + PROJECT_FILE_NAME));
+			if (add(project, module, properties, version)) {
 				log.error("Error on reading installing module: " + module);
 			}
 		} catch (Exception e) {
@@ -125,8 +138,8 @@ public class ModuleManager {
 	 *          generic project information.
 	 * @return true if module is correctly installed.
 	 */
-	protected boolean add(String project, String module, Properties projectInfo) {
-		return add(project, new ModuleData(module, ROMA_ORGANIZATION_NAME, "latest.integration", true), projectInfo);
+	protected boolean add(String project, String module, Properties projectInfo, String version) {
+		return add(project, new ModuleData(module, ROMA_ORGANIZATION_NAME, version, true), projectInfo);
 	}
 
 	/**
