@@ -17,13 +17,13 @@
 		<td align="left"
 			style="width: 150px;height: 75px; background-image: url(<%=request.getContextPath()%>/static/base/image/logo.jpg);background-repeat: no-repeat;background-color: rgb(255, 255, 255);background-position: 20px 5px; border-color: rgb(255, 255, 255);border: 0;"></td>
 		<td>
-		<h1><a style="text-decoration: none" href='<%=request.getContextPath()%>/app/direct/home'><%=appName%></a></h1>
+		<h1><%=appName%></h1>
 		</td>
 		<td>
 		<table>
 			<tr>
 				<td>User:</td>
-				<td><a href='<%=request.getContextPath()%>/app/direct/changePassword'><%=sess.getAccount()%></a></td>
+				<td><%=sess.getAccount()%></td>
 			</tr>
 			<tr>
 				<td>Logged On:</td>

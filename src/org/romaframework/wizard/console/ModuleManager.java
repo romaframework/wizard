@@ -41,7 +41,7 @@ import org.romaframework.wizard.RomaWizardArtifactFilter;
 public class ModuleManager {
 
 	public static final String			ROMA_ORGANIZATION_NAME	= "org.romaframework";
-	public static final String[]		TXT_FILES								= { "**/*.css", "**/*.jsp", "**/*.java", "**/*.xml", "**/*.js", "**/*.classpath", "**/*.project" };
+	public static final String[]		TXT_FILES								= { "**/*.css", "**/*.jsp", "**/*.java", "**/*.xml", "**/*.js", "**/*.classpath", "**/*.project","**/*.sh","**/*.bat" };
 	private Ivy											ivy;
 	private static final Log				log											= LogFactory.getLog(ModuleManager.class);
 	private File										projectFile;
@@ -53,7 +53,7 @@ public class ModuleManager {
 		if (ivy == null) {
 			ivy = Ivy.newInstance();
 			try {
-				ivy.configure(new File(PathHelper.getWizardPath() + "projectInstall/ivysettings.xml"));
+				ivy.configure(new File(PathHelper.getWizardPath() + "project-install/ivysettings.xml"));
 			} catch (Exception e) {
 				log.error("Error on ivy loading");
 				throw new RuntimeException("Error on ivy loading", e);
@@ -174,7 +174,7 @@ public class ModuleManager {
 				RetrieveOptions options = new RetrieveOptions();
 				options.setConfs(new String[] { "wizard" });
 				options.setArtifactFilter(new RomaWizardArtifactFilter());
-				getIvy().retrieve(mri, PathHelper.getWizardPath() + "libs/[artifact].[ext]", options);
+				getIvy().retrieve(mri, PathHelper.getWizardPath() + "temp/libs/[artifact].[ext]", options);
 				List<?> dependencies = repo.getDependencies();
 				Collections.reverse(dependencies);
 				for (Object o : dependencies) {
@@ -187,8 +187,7 @@ public class ModuleManager {
 				installArtifacts(repo.getModuleDescriptor().getAllArtifacts(), repo.getModuleDescriptor(), getIvy().getSettings().getVersionMatcher());
 
 				try {
-					org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "libs"));
-					org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "export"));
+					org.apache.commons.io.FileUtils.deleteDirectory(new File(PathHelper.getWizardPath() + "temp"));
 				} catch (Exception e) {
 					log.warn("Internal error on tmp directory clear", e);
 				}
@@ -219,7 +218,7 @@ public class ModuleManager {
 	 */
 	protected void installArtifacts(Artifact[] artifacts, ModuleDescriptor descriptor, VersionMatcher versionMatcher) {
 		for (Artifact art : artifacts) {
-			File artifactFile = new File(PathHelper.getWizardPath() + "libs/" + art.getName() + "." + art.getExt());
+			File artifactFile = new File(PathHelper.getWizardPath() + "temp/libs/" + art.getName() + "." + art.getExt());
 			if (artifactFile.exists()) {
 
 				boolean conains = false;
@@ -242,7 +241,7 @@ public class ModuleManager {
 
 	private File extractLocal(File moduleFile) {
 		String name = moduleFile.getName().substring(0, moduleFile.getName().lastIndexOf('.'));
-		File ext = new File(PathHelper.getWizardPath() + "export/" + name);
+		File ext = new File(PathHelper.getWizardPath() + "temp/export/" + name);
 		FileUtils.unzipArchive(moduleFile, ext);
 		return ext;
 
@@ -328,7 +327,7 @@ public class ModuleManager {
 			project.setUserProperty("project." + (String) key, (String) projectInfo.get(key));
 		}
 
-		project.setUserProperty("wizard.path", PathHelper.getWizardPath() + "projectInstall/");
+		project.setUserProperty("wizard.path", PathHelper.getWizardPath() + "project-install/");
 		project.setUserProperty("project.path", projectFile.getAbsolutePath());
 		project.setUserProperty("project.package-path", ((String) projectInfo.get(PROJECT_PACKAGE)).replace('.', '/'));
 		project.setUserProperty("ant.file", buildFile.getAbsolutePath());
