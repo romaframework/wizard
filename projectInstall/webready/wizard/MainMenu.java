@@ -21,7 +21,7 @@ public class MainMenu implements MessageResponseListener {
 	private BackOfficeMenu	backOffice	= new BackOfficeMenu();
 
 	public void homePage() throws ClassNotFoundException {
-		BaseProfile currProfile = Roma.session().getAccount();
+		BaseProfile currProfile = ((BaseAccount)Roma.session().getAccount()).getProfile();
 
 		String homePage = "HomePage";
 		if (currProfile != null && currProfile.getHomePage() != null) {
@@ -32,7 +32,7 @@ public class MainMenu implements MessageResponseListener {
 	}
 
 	public void changePassword() {
-		BaseAccount currAccount = Roma.session().getAccount();
+		BaseAccount currAccount = (BaseAccount)Roma.session().getAccount();
 		Roma.flow().forward(new ChangePassword(currAccount, this), "screen:popup");
 	}
 
