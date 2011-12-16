@@ -18,6 +18,6 @@ public class BackOfficeMenu {
 	}
 	
 	public void controlPanel(){
-		Roma.flow().forward(new RomaControlPanel(),"screen://body");
+		Roma.flow().forward(new RomaControlPanel(),"body");
 	}
 }

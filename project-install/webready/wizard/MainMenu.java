@@ -28,12 +28,12 @@ public class MainMenu implements MessageResponseListener {
 			homePage = currProfile.getHomePage();
 		}
 
-		Roma.flow().forward(homePage, "screen://body");
+		Roma.flow().forward(homePage, "body");
 	}
 
 	public void changePassword() {
 		BaseAccount currAccount = (BaseAccount)Roma.session().getAccount();
-		Roma.flow().forward(new ChangePassword(currAccount, this), "screen:popup");
+		Roma.flow().popup(new ChangePassword(currAccount, this));
 	}
 
   @LoggingAction(level = LoggingConstants.LEVEL_INFO, category = ActivityLogCategories.CATEGORY_LOGIN, post = "Logout")

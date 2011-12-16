@@ -18,17 +18,17 @@ public class Header implements MessageResponseListener {
 	@ViewAction(label = "", render = ViewConstants.RENDER_BUTTON)
 	public void home() {
 		BaseAccount currAccount = Roma.session().getAccount();
-		Roma.flow().forward(currAccount.getProfile().getHomePage(),"screen://body");
+		Roma.flow().forward(currAccount.getProfile().getHomePage(),"body");
 	}
 
 	@ViewAction(label = "", render = ViewConstants.RENDER_BUTTON)
 	public void changePassword() {
 		BaseAccount currAccount = Roma.session().getAccount();
-		Roma.flow().forward(new ChangePassword(currAccount, this), "screen:popup");
+		Roma.flow().popup(new ChangePassword(currAccount, this));
 	}
 
 	@ViewAction(label = "", render = ViewConstants.RENDER_BUTTON)
-	@FlowAction(next = RomaControlPanel.class, position="screen://body")
+	@FlowAction(next = RomaControlPanel.class, position="body")
 	public void controlPanel() {
 	}
 

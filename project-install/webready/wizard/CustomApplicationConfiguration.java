@@ -34,7 +34,7 @@ public class CustomApplicationConfiguration extends AbstractApplicationConfigura
 	public void login(LoginListener iListener) {
 		Login form = new Login();
 		form.setListener(iListener);
-		Roma.flow().forward(form, "screen://body");
+		Roma.flow().forward(form, "body");
 	}
 	
 	/**

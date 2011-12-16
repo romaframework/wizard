@@ -26,7 +26,7 @@ public class DirectServiceImpl implements DirectService {
 		Roma.flow().clearHistory();
 
 		// FORWARD TO THE CONFIGURED HOME PAGE
-		Roma.flow().forward(homePage, "screen://body");
+		Roma.flow().forward(homePage, "body");
 	}
 
 	public void controlPanel() {
@@ -35,7 +35,7 @@ public class DirectServiceImpl implements DirectService {
 		Roma.flow().clearHistory();
 
 		// FORWARD TO THE CONFIGURED HOME PAGE
-		Roma.flow().forward(RomaControlPanel.class, "screen://body");
+		Roma.flow().forward(RomaControlPanel.class, "body");
 	}
 
 	public void logout(HttpServletRequest iRequest, HttpServletResponse iResponse) {
