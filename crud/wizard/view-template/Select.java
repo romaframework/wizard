@@ -24,7 +24,6 @@ import #{project.package}.repository.#{crud.class}Repository;
  * <br/><br/>
  * @author #{author}     
  */
-@ViewClass(layout = ViewConstants.LAYOUT_POPUP)
 public class #{crud.class}Select extends CRUDSelect<#{crud.class}> {
 
   protected FullTextCRUDFilter<#{crud.class}>    filter;
