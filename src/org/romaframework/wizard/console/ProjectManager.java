@@ -8,6 +8,8 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.romaframework.aspect.console.ConsoleAspect;
+import org.romaframework.aspect.console.annotation.ConsoleAction;
 import org.romaframework.aspect.console.annotation.ConsoleClass;
 import org.romaframework.aspect.console.annotation.ConsoleParameter;
 import org.romaframework.core.Roma;
@@ -15,7 +17,7 @@ import org.romaframework.wizard.ModuleData;
 import org.romaframework.wizard.PathHelper;
 import org.romaframework.wizard.ProjectTypes;
 
-@ConsoleClass(name = "project")
+@ConsoleClass(name = "project", defaultAction = "help", description = "Project management")
 public class ProjectManager {
 
 	public static final String	BASE_SOURCE_FOLDER	= "/src/main/java/";
@@ -34,7 +36,11 @@ public class ProjectManager {
 
 	private Properties					properties					= new Properties();
 
-	public void create(@ConsoleParameter(name = "type") String type, String name, String pack, String path) {
+	@ConsoleAction(description = "Create a new project")
+	public void create(@ConsoleParameter(name = "type", description = "the type of project example: web,webready,console") String type,
+			@ConsoleParameter(name = "name", description = "the name of the project") String name,
+			@ConsoleParameter(name = "package", description = "the package of new project") String pack,
+			@ConsoleParameter(name = "path", description = " the folder where the was created.") String path) {
 
 		properties.put(PROJECT_PACKAGE, pack);
 		properties.put(PROJECT_NAME, name);
@@ -86,7 +92,9 @@ public class ProjectManager {
 		}
 	}
 
-	public void crud(String claz, String projectfolder) {
+	@ConsoleAction(description = "Create a crud for a class in a project")
+	public void crud(@ConsoleParameter(name = "class", description = "domain class that will be generate the crud ") String claz,
+			@ConsoleParameter(name = "project-folder", description = "the path of the project") String projectfolder) {
 
 		if (!projectfolder.endsWith("/")) {
 			projectfolder = projectfolder.concat("/");
@@ -98,7 +106,8 @@ public class ProjectManager {
 			return;
 		}
 
-		String realpath =claz.replaceAll("\\.", "/");;
+		String realpath = claz.replaceAll("\\.", "/");
+		;
 		realpath = projectfolder.concat("src/main/java/").concat(realpath).concat(".java");
 		File rpath = new File(realpath);
 
@@ -116,16 +125,25 @@ public class ProjectManager {
 		}
 		String crudClass = realpath.substring(realpath.lastIndexOf('/') + 1, realpath.length() - 5);
 		properties.put("crud.class", crudClass);
-		properties.put("crud.package.path", realpath.substring(0, realpath.lastIndexOf('/') ) );
-		properties.put("domain.package", claz.substring(0, claz.lastIndexOf('.') ) );
+		properties.put("crud.package.path", realpath.substring(0, realpath.lastIndexOf('/')));
+		properties.put("domain.package", claz.substring(0, claz.lastIndexOf('.')));
 		properties.put("crud.path", crudClass.toLowerCase());
-		
+
 		File projectcrud = new File(PathHelper.getWizardPath() + "crud/");
 
 		if (projectcrud.exists()) {
 			ModuleManager.install(projectcrud, new File(projectfolder), properties);
 
 		}
+	}
+
+	@ConsoleAction(description = "Display the project management help")
+	public void help(@ConsoleParameter(name = "commands...") String... args) {
+		String name = "project";// Roma.getFeature(this, ConsoleClassFeatures.NAME);
+		if (args.length == 0)
+			System.out.println(Roma.component(ConsoleAspect.class).buildHelpCommandGroup(name));
+		else if (args.length == 1)
+			System.out.println(Roma.component(ConsoleAspect.class).buildHelpCommand(name, args[0]));
 	}
 
 }

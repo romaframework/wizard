@@ -31,17 +31,19 @@ import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.FilterSet;
+import org.romaframework.aspect.console.annotation.ConsoleAction;
 import org.romaframework.aspect.console.annotation.ConsoleClass;
+import org.romaframework.aspect.console.annotation.ConsoleParameter;
 import org.romaframework.core.util.FileUtils;
 import org.romaframework.wizard.ModuleData;
 import org.romaframework.wizard.PathHelper;
 import org.romaframework.wizard.RomaWizardArtifactFilter;
 
-@ConsoleClass(name = "module")
+@ConsoleClass(name = "module", description = "Module management")
 public class ModuleManager {
 
 	public static final String			ROMA_ORGANIZATION_NAME	= "org.romaframework";
-	public static final String[]		TXT_FILES								= { "**/*.css", "**/*.jsp", "**/*.java", "**/*.xml", "**/*.js", "**/*.classpath", "**/*.project","**/*.sh","**/*.bat" };
+	public static final String[]		TXT_FILES								= { "**/*.css", "**/*.jsp", "**/*.java", "**/*.xml", "**/*.js", "**/*.classpath", "**/*.project", "**/*.sh", "**/*.bat" };
 	private Ivy											ivy;
 	private static final Log				log											= LogFactory.getLog(ModuleManager.class);
 	private File										projectFile;
@@ -69,7 +71,9 @@ public class ModuleManager {
 		return report;
 	}
 
-	public void add(String module, String project) {
+	@ConsoleAction(description = "add a module to a project")
+	public void add(@ConsoleParameter(name = "module", description = "the name of module to add") String module,
+			@ConsoleParameter(name = "project", description = "path of project where add the module") String project) {
 		log.error("Error on reading installing module: " + module);
 		Properties properties = new Properties();
 		try {
@@ -82,7 +86,10 @@ public class ModuleManager {
 		}
 	}
 
-	public void add(String module, String version, String project) {
+	@ConsoleAction(description = "add a module of a version to a project")
+	public void add(@ConsoleParameter(name = "module", description = "the name of module to add") String module,
+			@ConsoleParameter(name = "version", description = "the version of module to add") String version,
+			@ConsoleParameter(name = "project", description = "path of project where add the module") String project) {
 		log.error("Error on reading installing module: " + module);
 		Properties properties = new Properties();
 		try {
