@@ -142,8 +142,10 @@ public class ProjectManager {
 		String name = "project";// Roma.getFeature(this, ConsoleClassFeatures.NAME);
 		if (args.length == 0)
 			System.out.println(Roma.component(ConsoleAspect.class).buildHelpCommandGroup(name));
-		else if (args.length == 1)
+		else if (args.length > 1) {
+			System.out.println("Wrong project parameters");
 			System.out.println(Roma.component(ConsoleAspect.class).buildHelpCommand(name, args[0]));
+		}
 	}
 
 }
