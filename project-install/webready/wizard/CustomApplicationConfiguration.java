@@ -41,7 +41,7 @@ public class CustomApplicationConfiguration extends AbstractApplicationConfigura
 	 * Callback called on every user disconnected from application
 	 */
 	public void endUserSession() {
-		Roma.view().pushCommand(new RedirectViewCommand(Roma.view().getContextPath()+"/dynamic/common/logout.jsp"));
+		Roma.view().pushCommand(new RedirectViewCommand(Roma.view().getContextPath()+"/dynamic/logout.jsp"));
 	}
 
 	public String getStatus() {

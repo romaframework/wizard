@@ -28,8 +28,8 @@
 		</table>
 		</td>
 		<td align="right"><a
-			href='<%=request.getContextPath()%>/dynamic/common/logout.jsp'><img
-			src='<%=request.getContextPath()%>/static/base/image/logout.png'
+			href='<%=request.getContextPath()%>/dynamic/logout.jsp'><img
+			src='<%=request.getContextPath()%>/static/themes/default/image/logout.png'
 			border='0' /></a></td>
 	</tr>
 </table>

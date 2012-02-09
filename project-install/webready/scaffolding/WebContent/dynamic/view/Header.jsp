@@ -15,7 +15,7 @@
 <table style="width:100%"" style="border-bottom: 1px solid #9DBBC6;" class="class_Header">
 	<tr>
 		<td align="left"
-			style="width: 150px;height: 75px; background-image: url(<%=request.getContextPath()%>/static/base/image/logo.jpg);background-repeat: no-repeat;background-color: rgb(255, 255, 255);background-position: 20px 5px; border-color: rgb(255, 255, 255);border: 0;"></td>
+			style="width: 150px;height: 75px; background-image: url(<%=request.getContextPath()%>/static/themes/default/image/logo.jpg);background-repeat: no-repeat;background-color: rgb(255, 255, 255);background-position: 20px 5px; border-color: rgb(255, 255, 255);border: 0;"></td>
 		<td>
 		<h1><%=appName%></h1>
 		</td>
@@ -41,8 +41,8 @@
 			<roma:action name="controlPanel" /> 
 		</td>
 		<td align="center" style="width: 100px;">
-			<a href="<%=request.getContextPath()%>/dynamic/common/logout.jsp" title="logout">
-			<img src="<%=request.getContextPath()%>/static/base/image/logout.png"
+			<a href="<%=request.getContextPath()%>/dynamic/logout.jsp" title="logout">
+			<img src="<%=request.getContextPath()%>/static/themes/default/image/logout.png"
 			style="border:0;" class="img_logout" alt="Logout" /> 
 			</a> 
 		</td>

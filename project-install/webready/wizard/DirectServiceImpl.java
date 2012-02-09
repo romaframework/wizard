@@ -40,7 +40,7 @@ public class DirectServiceImpl implements DirectService {
 
 	public void logout(HttpServletRequest iRequest, HttpServletResponse iResponse) {
 		try {
-			iResponse.sendRedirect(iRequest.getContextPath() + "/dynamic/common/logout.jsp");
+			iResponse.sendRedirect(iRequest.getContextPath() + "/dynamic/logout.jsp");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
