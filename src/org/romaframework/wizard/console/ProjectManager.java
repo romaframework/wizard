@@ -48,7 +48,7 @@ public class ProjectManager {
 		properties.put(PROJECT_IOC_PATH, BASE_IOC_FOLDER);
 		properties.put(PROJECT_IOC_FILE, BASE_IOC_FILE);
 
-		if (path == null || path == "")
+		if (path == null || "".equals(path))
 			path = ".";
 		File workingDir = new File(path);
 		if (!workingDir.exists()) {
