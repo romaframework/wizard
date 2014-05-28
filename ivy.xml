@@ -15,6 +15,6 @@
 		<dependency org="ant-contrib" name="ant-contrib" rev="latest.integration" conf="*->default" />
 		<dependency org="ant" name="ant-nodeps" rev="latest.integration" conf="*->default" />
 		<dependency org="commons-io" name="commons-io" rev="latest.integration" conf="*->default" />
-		<dependency org="com.oopsconsultancy" name="xmltask" rev="latest.integration" conf="*->default" />
+		<dependency org="oopsconsultancy" name="xmltask" rev="1.16" conf="*->default" />
 	</dependencies>
 </ivy-module>

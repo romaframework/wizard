@@ -9,6 +9,7 @@
 				<artifact pattern="${ivy.default.ivy.user.dir}/local/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]" />
 			</filesystem>
 			<ibiblio name="atlassian" m2compatible="true" root="http://repository.atlassian.com/maven2/" />
+			<ibiblio name="pentaho-releases" root="http://repository.pentaho.org/artifactory/repo/" m2compatible="true" />
 		</chain>
 	</resolvers>
 </ivysettings>
